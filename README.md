@@ -47,6 +47,10 @@ go build -o main.exe main.go
 
 ### 更新日志
 
+### V0.0.2
+
+- 修改配置文件方式为Json
+
 ### v 0.0.1
 
 - 初始化项目

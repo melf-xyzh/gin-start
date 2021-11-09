@@ -15,11 +15,19 @@ package main
 
 import (
 	"fmt"
+	"gin-start/config"
 	myDB "gin-start/models"
 	"gin-start/routers"
+
 )
 
 func main() {
+	//初始化配置文件
+	err := config.InitConfigJson("config\\Config.json")
+	if err != nil {
+		panic(err)
+	}
+
 	// 连接数据库
 	errDB := myDB.InitDB()
 	if errDB != nil {

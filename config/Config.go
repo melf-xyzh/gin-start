@@ -12,18 +12,65 @@
 
 package config
 
-import "time"
-
-const (
-	DbHost          = "127.0.0.1" // 数据库主机
-	DbPort          = "3306"      // 数据库端口
-	DbUser          = "root"      // 数据库用户名
-	DbPassword      = "123456789" // 数据库密码
-	DbName          = "gin-start" // 数据库名称
-	MaxIdleConns    = 10          // 空闲连接池中连接的最大数量
-	MaxOpenConns    = 100         // 打开数据库连接的最大数量
-	ConnMaxLifetime = time.Hour   // 连接可复用的最大时间
-
-	RouterHost = "0.0.0.0"
-	RouterPort = "2048"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"sync"
 )
+
+type GlobalConfig struct {
+	Database DatabaseConfig `json:"Database"`
+	Self     SelfConfig     `json:"Self"`
+}
+
+type DatabaseConfig struct {
+	Type            string `json:"Type"`
+	DbHost          string `json:"DbHost"`
+	DbPort          string `json:"DbPort"`
+	DbUser          string `json:"DbUser"`
+	DbPassword      string `json:"DbPassword"`
+	DbName          string `json:"DbName"`
+	MaxIdleConns    int    `json:"MaxIdleConns"`
+	MaxOpenConns    int    `json:"MaxOpenConns"`
+	ConnMaxLifetime int    `json:"ConnMaxLifetime"`
+}
+
+type SelfConfig struct {
+	Host string `json:"RouterHost"`
+	Port string `json:"RouterPort"`
+}
+
+var (
+	globalConfig *GlobalConfig
+	configMux    sync.RWMutex
+)
+
+func Config() *GlobalConfig {
+	return globalConfig
+}
+
+// InitConfigJson
+/**
+ * @Description: 导入配置文件
+ * @param fliepath config文件的路径
+ * @return error 错误
+ */
+func InitConfigJson(fliepath string) error {
+	var config GlobalConfig
+	file, err := ioutil.ReadFile(fliepath)
+	if err != nil {
+		fmt.Println("配置文件读取错误,找不到配置文件", err)
+		return err
+	}
+
+	if err = json.Unmarshal(file, &config); err != nil {
+		fmt.Println("配置文件读取失败", err)
+		return err
+	}
+
+	configMux.Lock()
+	globalConfig = &config
+	configMux.Unlock()
+	return nil
+}

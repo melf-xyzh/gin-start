@@ -1,0 +1,17 @@
+{
+  "Database": {
+    "Type": "Mysql",
+    "DbHost": "127.0.0.1",
+    "DbPort": "3306",
+    "DbUser": "root",
+    "DbPassword": "123456789",
+    "DbName": "gin-start",
+    "MaxIdleConns": 10,
+    "MaxOpenConns": 100,
+    "ConnMaxLifetime": 1
+  },
+  "Self": {
+    "RouterHost": "0.0.0.0",
+    "RouterPort": "2048"
+  }
+}
