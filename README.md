@@ -1,37 +1,58 @@
 # gin-start
 
-#### 介绍
+### 介绍
 一个Gin框架的项目模板
 
-#### 软件架构
-软件架构说明
+### 软件架构
+> 语言：Golang
+>
+> Web框架：Gin
+>
+> ORM：GORM 
 
+### 项目目录
 
-#### 安装教程
+```
+├─config			配置文件
+├─controller		Controller层
+├─middleware		中间件
+├─models			模型实体
+├─pkg				工具包
+├─prd				项目文档，ER图
+├─routers			路由相关
+├─service			Service层
+├─static			静态文件
+├─templates			Go模板文件
+│  └─index
+├─upload			文件上传目录
+└─views				Views层
+│ .gitignore        git
+│ go.mod            go mod  
+| main.exe          Windows执行文件
+│ main.go           main入口
+│ README.md    
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 启动
 
-#### 使用说明
+```bash
+go run main.go
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 打包部署
 
-#### 参与贡献
+```
+go build -o main.exe main.go
+```
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+### 更新日志
 
+### v 0.0.1
 
-#### 特技
+- 初始化项目
+- 配置数据库连接池
+- 配置路由
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+### 备注
+
+> 暂无
