@@ -1,0 +1,39 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+.container-fluid {
+    height: 100%;
+}
+
+.login-row {
+    height: 100%;
+}
+
+.login-left {
+    height: 100%;
+    background: #1c2938;
+}
+
+.login1 {
+    width: 61.8%;
+    padding-top: 30%;
+}
+
+.login2{
+    width: 50%;
+    padding-top: 30%;
+}
+
+h1{
+    color: #e2e1e4;
+}
+
+h2{
+    margin-top: 5%;
+    color: #cdd1d3;
+}

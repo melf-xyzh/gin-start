@@ -10,6 +10,12 @@
     "MaxOpenConns": 100,
     "ConnMaxLifetime": 1
   },
+  "Redis": {
+    "Host": "127.0.0.1",
+    "Port": "6379",
+    "Password": "123456789",
+    "DB": 0
+  },
   "Self": {
     "RouterHost": "0.0.0.0",
     "RouterPort": "2048"

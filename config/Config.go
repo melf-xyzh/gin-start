@@ -21,19 +21,27 @@ import (
 
 type GlobalConfig struct {
 	Database DatabaseConfig `json:"Database"`
+	Redis    RedisConfig    `json:"Redis"`
 	Self     SelfConfig     `json:"Self"`
 }
 
 type DatabaseConfig struct {
-	Type            string `json:"Type"`
-	DbHost          string `json:"DbHost"`
-	DbPort          string `json:"DbPort"`
-	DbUser          string `json:"DbUser"`
-	DbPassword      string `json:"DbPassword"`
-	DbName          string `json:"DbName"`
-	MaxIdleConns    int    `json:"MaxIdleConns"`
-	MaxOpenConns    int    `json:"MaxOpenConns"`
-	ConnMaxLifetime int    `json:"ConnMaxLifetime"`
+	Type            string `json:"Type"`            // 数据库类型
+	DbHost          string `json:"DbHost"`          // 主机
+	DbPort          string `json:"DbPort"`          // 端口
+	DbUser          string `json:"DbUser"`          // 用户
+	DbPassword      string `json:"DbPassword"`      // 密码
+	DbName          string `json:"DbName"`          // 库名
+	MaxIdleConns    int    `json:"MaxIdleConns"`    // 空闲连接池中连接的最大数量
+	MaxOpenConns    int    `json:"MaxOpenConns"`    // 打开数据库连接的最大数量
+	ConnMaxLifetime int    `json:"ConnMaxLifetime"` // 连接可复用的最大时间（小时）
+}
+
+type RedisConfig struct {
+	Host     string `json:"Host"`     // 主机
+	Port     string `json:"Port"`     // 端口
+	Password string `json:"Password"` // 密码
+	DB       int    `json:"DB"`       // 数据库（0-15）
 }
 
 type SelfConfig struct {

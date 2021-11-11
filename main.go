@@ -16,9 +16,9 @@ package main
 import (
 	"fmt"
 	"gin-start/config"
-	myDB "gin-start/models"
+	"gin-start/connection"
+	"gin-start/models"
 	"gin-start/routers"
-
 )
 
 func main() {
@@ -29,15 +29,23 @@ func main() {
 	}
 
 	// 连接数据库
-	errDB := myDB.InitDB()
-	if errDB != nil {
-		fmt.Println("数据库异常")
-		//panic(err)
+	errPool := connection.InitConnectionPool()
+	if errPool != nil {
+		panic(errPool)
 	}
 
+	// 数据库自动迁移
+	errDBCreate := models.DBAutoMigrate()
+	if errDBCreate != nil {
+		panic(errDBCreate)
+	}
+
+	// 数据表数据初始化
+	models.InitModel()
+
 	// 初始化路由
-	r := routers.Init()
-	if err := r.Run(); err != nil {
-		fmt.Printf("服务启动失败, 异常：%v\n", err)
+	r := routers.InitRouter()
+	if errRouter := r.Run(); errRouter != nil {
+		fmt.Printf("服务启动失败, 异常：%v\n", errRouter)
 	}
 }

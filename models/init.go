@@ -13,70 +13,30 @@
 package models
 
 import (
-	"fmt"
-	Config "gin-start/config"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"time"
+	"errors"
+	conn "gin-start/connection"
 )
 
-var (
-	DB *gorm.DB
-)
-
-// InitDB
+// DBAutoMigrate
 /**
- * @Description: 初始化数据库
- * @return err 错误
+ * @Description: 自动迁移
+ * @param DB 数据库连接池
  */
-func InitDB() (err error) {
-	// 获取配置文件
-	config := Config.Config()
-
-	switch config.Database.Type {
-	case "Mysql":
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			config.Database.DbUser, config.Database.DbPassword, config.Database.DbHost, config.Database.DbPort, config.Database.DbName,
-		)
-		fmt.Println("连接数据库")
-		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-		if err != nil {
-			fmt.Println(err)
-			//fmt.Println("数据库连接失败")
-			panic("数据库连接失败")
-		}
-	default:
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			config.Database.DbUser, config.Database.DbPassword, config.Database.DbHost, config.Database.DbPort, config.Database.DbName,
-		)
-		fmt.Println("连接数据库")
-		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-		if err != nil {
-			fmt.Println(err)
-			fmt.Println("数据库连接失败")
-		}
-	}
-
-	// 维护连接池
-	theDB, _ := DB.DB()
-	// 设置空闲连接池中连接的最大数量
-	theDB.SetMaxIdleConns(config.Database.MaxIdleConns)
-	// 设置打开数据库连接的最大数量
-	theDB.SetMaxOpenConns(config.Database.MaxOpenConns)
-	// 设置了连接可复用的最大时间
-	theDB.SetConnMaxLifetime(time.Hour * time.Duration(config.Database.ConnMaxLifetime))
-
+func DBAutoMigrate() (err error) {
 	// 自动迁移
-	err = DB.AutoMigrate(
+	err = conn.DB.AutoMigrate(
 	// 实体
 	)
 	if err != nil {
-		fmt.Println(err)
-		fmt.Println("自动迁移失败")
+		return errors.New("自动迁移失败：" + err.Error())
 	}
-
-	// 初始化数据表
-
-	//测试连通性
 	return nil
+}
+
+// InitModel
+/**
+ * @Description: 初始化数据表
+ */
+func InitModel() {
+
 }
