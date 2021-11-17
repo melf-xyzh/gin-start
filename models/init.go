@@ -43,10 +43,17 @@ func DBAutoMigrate() (err error) {
  */
 func InitModel() {
 	// Gorm适配器
-	adapter, err1 := gormadapter.NewAdapterByDB(conn.DB)
+	adapter, err1 := gormadapter.NewAdapterByDBWithCustomTable(conn.DB,&CasbinRule{})
 	if err1 != nil {
 		log.Fatalln("Casbin Gorm适配器错误：" + err1.Error())
 	}
+	log.Println("导入适配器")
+
+	//// Gorm适配器
+	//adapter, err1 := gormadapter.NewAdapterByDB(conn.DB)
+	//if err1 != nil {
+	//	log.Fatalln("Casbin Gorm适配器错误：" + err1.Error())
+	//}
 	// 通过ORM新建一个执行者
 	Enforcer, err2 := casbin.NewEnforcer("config\\rbac_model.conf", adapter)
 	if err2 != nil {
@@ -57,4 +64,26 @@ func InitModel() {
 	if err3 != nil {
 		log.Fatalln("导入访问策略异常：" + err3.Error())
 	}
+
+	//subject := "tom"
+	//object := "/api/routers"
+	//action := "POST"
+	//
+	//// 添加策略
+	//_, err := Enforcer.AddPolicy(subject, object, action)
+	//if err != nil {
+	//	log.Fatalln(err.Error())
+	//	return
+	//}
+	//log.Println("添加策略成功")
+	//
+	//// 为用户添加角色
+	//_, err = Enforcer.AddRoleForUser("alice", "role1")
+	//if err != nil {
+	//	return
+	//}
+	//
+	//// 为用户或角色添加权限
+	//Enforcer.AddPermissionForUser("role2", "read1")
+
 }
