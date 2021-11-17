@@ -66,6 +66,7 @@ func InitDB() (err error) {
 	// 设置了连接可复用的最大时间
 	theDB.SetConnMaxLifetime(time.Hour * time.Duration(config.Database.ConnMaxLifetime))
 
+	InitDBForCasbin()
 	//测试连通性
 	return nil
 }

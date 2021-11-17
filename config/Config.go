@@ -23,6 +23,7 @@ type GlobalConfig struct {
 	Database DatabaseConfig `json:"Database"`
 	Redis    RedisConfig    `json:"Redis"`
 	Self     SelfConfig     `json:"Self"`
+	Company  CompanyConfig  `json:"Company"`
 }
 
 type DatabaseConfig struct {
@@ -47,6 +48,10 @@ type RedisConfig struct {
 type SelfConfig struct {
 	Host string `json:"RouterHost"`
 	Port string `json:"RouterPort"`
+}
+
+type CompanyConfig struct {
+	ID int64 `json:"ID"`
 }
 
 var (

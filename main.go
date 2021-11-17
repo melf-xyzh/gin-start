@@ -43,6 +43,7 @@ func main() {
 	// 数据表数据初始化
 	models.InitModel()
 
+
 	// 初始化路由
 	r := routers.InitRouter()
 	if errRouter := r.Run(); errRouter != nil {
