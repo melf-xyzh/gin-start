@@ -15,11 +15,10 @@ package models
 import (
 	"errors"
 	conn "gin-start/connection"
-	"github.com/casbin/casbin"
-	"github.com/casbin/gorm-adapter"
+	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"log"
 )
-import _ "github.com/go-sql-driver/mysql"
 
 // DBAutoMigrate
 /**
@@ -43,10 +42,19 @@ func DBAutoMigrate() (err error) {
  * @Description: 初始化数据表
  */
 func InitModel() {
-	adapter := gormadapter.NewAdapterByDB(conn.DBForCasbin)
-	Enforcer := casbin.NewEnforcer("config\\rbac_model.conf", adapter)
+	// Gorm适配器
+	adapter, err1 := gormadapter.NewAdapterByDB(conn.DB)
+	if err1 != nil {
+		log.Fatalln("Casbin Gorm适配器错误：" + err1.Error())
+	}
+	// 通过ORM新建一个执行者
+	Enforcer, err2 := casbin.NewEnforcer("config\\rbac_model.conf", adapter)
+	if err2 != nil {
+		log.Fatalln("新建Casbin执行者异常：" + err2.Error())
+	}
+	// 导入访问策略
 	err3 := Enforcer.LoadPolicy()
 	if err3 != nil {
-		log.Fatalln(err3)
+		log.Fatalln("导入访问策略异常：" + err3.Error())
 	}
 }
