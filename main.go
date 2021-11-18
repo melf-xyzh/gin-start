@@ -34,6 +34,12 @@ func main() {
 		panic(errPool)
 	}
 
+	// 初始化Casbin执行者
+	errCasbin := connection.InitCasbin()
+	if errCasbin != nil {
+		panic(errCasbin)
+	}
+
 	// 数据库自动迁移
 	errDBCreate := models.DBAutoMigrate()
 	if errDBCreate != nil {

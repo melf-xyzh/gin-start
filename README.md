@@ -57,8 +57,8 @@ go build -o main.exe main.go
 - [ ] 身份认证（登录）
   - [ ] 基于Session
   - [ ] 基于Jwt
-- [ ] 权限控制
-  - [ ] 集成csabin
+- [x] 权限控制
+  - [x] 集成csabin
 - [ ] 集成ORM（Gorm）
 - [ ] SSE
 - [ ] gRPC
