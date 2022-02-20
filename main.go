@@ -14,45 +14,23 @@
 package main
 
 import (
-	"fmt"
 	"gin-start/config"
-	"gin-start/connection"
-	"gin-start/models"
-	"gin-start/routers"
+	"gin-start/global"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	//初始化配置文件
-	err := config.InitConfigJson("config\\Config.json")
-	if err != nil {
-		panic(err)
-	}
+	init := conf.Init{}
+	// 初始化环境变量
+	global.E = init.Env(global.ENV_DEV)
+	// 初始化Viper（读取配置文件）
+	global.V = init.Viper()
+	// 初始化数据库连接池
+	global.DB = init.Database()
+	// 初始化Redis连接池
+	global.RDB = init.Redis()
 
-	// 连接数据库
-	errPool := connection.InitConnectionPool()
-	if errPool != nil {
-		panic(errPool)
-	}
-
-	// 初始化Casbin执行者
-	errCasbin := connection.InitCasbin()
-	if errCasbin != nil {
-		panic(errCasbin)
-	}
-
-	// 数据库自动迁移
-	errDBCreate := models.DBAutoMigrate()
-	if errDBCreate != nil {
-		panic(errDBCreate)
-	}
-
-	// 数据表数据初始化
-	models.InitModel()
-
-
-	// 初始化路由
-	r := routers.InitRouter()
-	if errRouter := r.Run(); errRouter != nil {
-		fmt.Printf("服务启动失败, 异常：%v\n", errRouter)
-	}
+	r := gin.New()
+	// 启动服务
+	init.Run(r)
 }

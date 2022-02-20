@@ -8,7 +8,8 @@
     "DbName": "gin-start",
     "MaxIdleConns": 10,
     "MaxOpenConns": 100,
-    "ConnMaxLifetime": 1
+    "ConnMaxLifetime": 60,
+    "ConnMaxIdleTime": 1
   },
   "Redis": {
     "Host": "127.0.0.1",
