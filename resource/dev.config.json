@@ -21,7 +21,7 @@
     "RouterHost": "0.0.0.0",
     "RouterPort": "2048"
   },
-  "Company": {
-    "ID": 1
+  "Distributed": {
+    "Node": 1
   }
 }

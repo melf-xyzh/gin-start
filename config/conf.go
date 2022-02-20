@@ -15,11 +15,11 @@ package conf
 import (
 	"context"
 	"database/sql"
-	"gin-start/global"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	"github.com/melf-xyzh/gin-start/global"
 	"github.com/soheilhy/cmux"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
