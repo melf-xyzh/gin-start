@@ -1,4 +1,4 @@
-module gin-start
+module github.com/melf-xyzh/gin-start
 
 go 1.17
 
