@@ -12,8 +12,10 @@
 
 package global
 
+import "github.com/melf-xyzh/gin-start/utils/dtype"
+
 type Model struct {
-	ID         string  `json:"id,omitempty"            gorm:"column:id;primary_key;type:varchar(20)"`
-	CreateTime string  `json:"createTime,omitempty"    gorm:"column:create_time;comment:创建时间;"`
-	UpdateTime *string `json:"updateTime,omitempty"    gorm:"column:update_time;comment:更新时间;"`
+	ID         dtype.DistributedId `json:"id,omitempty"            gorm:"column:id;primary_key;type:varchar(20)"`
+	CreateTime dtype.Time          `json:"createTime,omitempty"    gorm:"column:create_time;comment:创建时间;"`
+	UpdateTime *dtype.Time         `json:"updateTime,omitempty"    gorm:"column:update_time;comment:更新时间;"`
 }

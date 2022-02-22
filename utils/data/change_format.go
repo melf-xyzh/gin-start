@@ -40,6 +40,14 @@ func ToString(i interface{}) (str string) {
 		str = strconv.FormatFloat(i.(float64), 'f', -1, 32)
 	case time.Time:
 		str = i.(time.Time).Format("2006-01-02 15:04:05")
+	case []uint8:
+		var ba []byte
+		for _, b := range i.([]uint8) {
+			ba = append(ba, byte(b))
+		}
+		str = string(ba)
+	default:
+		panic("该类型不支持")
 	}
 	return
 }

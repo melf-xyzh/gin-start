@@ -14,8 +14,7 @@ package usermod
 
 import (
 	"github.com/melf-xyzh/gin-start/global"
-	"github.com/melf-xyzh/gin-start/utils/data"
-	"github.com/melf-xyzh/gin-start/utils/distributed"
+	"github.com/melf-xyzh/gin-start/utils/dtype"
 	"gorm.io/gorm"
 	"time"
 )
@@ -55,13 +54,13 @@ func (User) TableName() string {
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	u.ID = distributed.CreateIdString()
-	u.CreateTime = data.NowStr()
+	u.ID = dtype.CreateId()
+	u.CreateTime = dtype.CreateTime()
 	return
 }
 
 func (u *User) BeforeUpdate(tx *gorm.DB) (err error) {
-	t := data.NowStr()
+	t := dtype.CreateTime()
 	u.UpdateTime = &t
 	return
 }
