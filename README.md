@@ -7,7 +7,7 @@
 ### 安装
 
 ```
-go get github.com/melf-xyzh/gin-start/tags
+go get github.com/melf-xyzh/gin-start
 ```
 
 ### 例子
