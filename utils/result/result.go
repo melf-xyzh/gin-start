@@ -13,6 +13,7 @@
 package result
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -87,4 +88,17 @@ func FailMsg(c *gin.Context, err error) {
  */
 func FailDataMsg(c *gin.Context, data interface{}, err error) {
 	Result(CODE_FAIL, data, err.Error(), c)
+}
+
+// File
+/**
+ *  @Description: 返回文件
+ *  @param c
+ *  @param fileName
+ *  @param filePath
+ */
+func File(c *gin.Context, fileName, filePath string) {
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+	c.Header("Content-Type", "application/octet-stream")
+	c.File(filePath)
 }

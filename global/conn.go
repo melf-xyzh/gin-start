@@ -14,15 +14,17 @@ package global
 
 import (
 	"github.com/casbin/casbin/v2"
+	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
 
 var (
-	E        *Env             // 环境类型实例
-	V        *viper.Viper     // Viper实例
-	Enforcer *casbin.Enforcer // Casbin执行者
-	DB       *gorm.DB         // 数据库连接池
-	RDB      *redis.Client    // Redis连接池
+	E        *Env                // 环境类型实例
+	V        *viper.Viper        // Viper实例
+	Enforcer *casbin.Enforcer    // Casbin执行者
+	DB       *gorm.DB            // 数据库连接池
+	RDB      *redis.Client       // Redis连接池
+	Validate *validator.Validate // Validate参数校验器
 )

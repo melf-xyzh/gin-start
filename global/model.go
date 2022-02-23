@@ -12,10 +12,45 @@
 
 package global
 
-import "github.com/melf-xyzh/gin-start/utils/dtype"
+import (
+	"fmt"
+	"github.com/bwmarrin/snowflake"
+	"time"
+
+	"github.com/melf-xyzh/gin-start/utils/dtype"
+)
 
 type Model struct {
 	ID         dtype.DistributedId `json:"id,omitempty"            gorm:"column:id;primary_key;type:varchar(20)"`
 	CreateTime dtype.Time          `json:"createTime,omitempty"    gorm:"column:create_time;comment:创建时间;"`
 	UpdateTime *dtype.Time         `json:"updateTime,omitempty"    gorm:"column:update_time;comment:更新时间;"`
+}
+
+// CreateId
+/**
+ *  @Description: 创建一个分布式ID（雪花ID）
+ *  @return DistributedId
+ */
+func CreateId() dtype.DistributedId {
+	// Create a new Node with a Node number of 1
+	// node, err := snowflake.NewNode(nodeNum)
+	// 为编号为nodeNum的节点生成一个节点
+	nodeNum := V.GetInt64("Distributed.Node")
+	node, err := snowflake.NewNode(nodeNum)
+	if err != nil {
+		fmt.Println(err)
+	}
+	id := node.Generate()
+	return dtype.DistributedId(id.Int64())
+}
+
+// CreateTime
+/**
+ *  @Description: 创建一个时间戳
+ *  @return Time
+ */
+func CreateTime() dtype.Time {
+	t := time.Now()
+	tTime := dtype.Time(t)
+	return tTime
 }

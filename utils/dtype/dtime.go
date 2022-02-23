@@ -43,13 +43,3 @@ func (t *Time) Scan(v interface{}) error {
 	return nil
 }
 
-// CreateTime
-/**
- *  @Description: 创建一个时间戳
- *  @return Time
- */
-func CreateTime() Time {
-	t := time.Now()
-	tTime := Time(t)
-	return tTime
-}

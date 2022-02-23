@@ -18,6 +18,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/melf-xyzh/gin-start/global"
 	"github.com/soheilhy/cmux"
@@ -194,4 +195,15 @@ func (i Init) Run(r *gin.Engine) {
 	if err != nil {
 		panic("服务启动失败：" + err.Error())
 	}
+}
+
+// Validate
+/**
+ *  @Description: 初始化参数校验器
+ *  @receiver i
+ *  @return *validator.Validate
+ */
+func (i Init) Validate() *validator.Validate {
+	v := validator.New()
+	return v
 }

@@ -9,8 +9,6 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"github.com/bwmarrin/snowflake"
-	"github.com/melf-xyzh/gin-start/global"
 	"github.com/melf-xyzh/gin-start/utils/data"
 	"reflect"
 	"strconv"
@@ -45,22 +43,4 @@ func (t *DistributedId) Scan(v interface{}) error {
 		return errors.New(typ.Name() + "类型处理错误")
 	}
 	return nil
-}
-
-// CreateId
-/**
- *  @Description: 创建一个分布式ID（雪花ID）
- *  @return DistributedId
- */
-func CreateId() DistributedId {
-	// Create a new Node with a Node number of 1
-	//node, err := snowflake.NewNode(1)
-	// 为编号为nodeNum的节点生成一个节点
-	nodeNum := global.V.GetInt64("Distributed.Node")
-	node, err := snowflake.NewNode(nodeNum)
-	if err != nil {
-		fmt.Println(err)
-	}
-	id := node.Generate()
-	return DistributedId(id.Int64())
 }
