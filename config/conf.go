@@ -16,6 +16,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -154,8 +155,25 @@ func (i Init) Casbin() (Enforcer *casbin.Enforcer) {
 	}
 	log.Println("导入适配器")
 
+	m, _ := model.NewModelFromString(`
+		[request_definition]
+		r = sub, obj, act
+		
+		[policy_definition]
+		p = sub, obj, act
+		
+		[role_definition]
+		g = _, _
+		
+		[policy_effect]
+		e = some(where (p.eft == allow))
+		
+		[matchers]
+		m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+	`)
+
 	// 通过ORM新建一个执行者
-	Enforcer, err = casbin.NewEnforcer("resource\\rbac_model.conf", adapter)
+	Enforcer, err = casbin.NewEnforcer(m, adapter)
 	if err != nil {
 		panic("新建Casbin执行者异常：" + err.Error())
 	}
@@ -207,7 +225,3 @@ func (i Init) Validate() *validator.Validate {
 	v := validator.New()
 	return v
 }
-
-
-
-
