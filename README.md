@@ -19,10 +19,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/melf-xyzh/gin-start/config"
 	"github.com/melf-xyzh/gin-start/global"
-	usermod "github.com/melf-xyzh/gin-start/user/model"
+	"github.com/melf-xyzh/gin-start/global/check"
+	"github.com/melf-xyzh/gin-start/middleware"
+	"github.com/melf-xyzh/gin-start/user/model"
 	"github.com/melf-xyzh/gin-start/utils/result"
 	"log"
 )
+
+//go:generate go env -w GO111MODULE=on
+//go:generate go env -w GOPROXY=https://goproxy.cn,direct
+//go:generate go mod tidy
+//go:generate go mod download
 
 func main() {
 	init := conf.Init{}
@@ -34,6 +41,10 @@ func main() {
 	global.DB = init.Database()
 	// 初始化Redis连接池
 	global.RDB = init.Redis()
+	// 初始化参数校验器
+	global.Validate = init.Validate()
+	// 初始化Casbin
+	global.Enforcer = init.Casbin()
 
 	r := gin.New()
 
@@ -42,11 +53,18 @@ func main() {
 		panic("数据迁移失败")
 	}
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", middleware.Rate("4-M"), middleware.Rate0("6-M"), func(c *gin.Context) {
 		user := usermod.User{
-			Name: "MELF",
+			Name:        "MELF",
+			Email:       "123456789@99.com",
+			LastLoginIp: "8.8.8.8",
 		}
-		err := global.DB.Create(&user).Error
+		err := check.Check(user, usermod.CreateUserCheck)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = global.DB.Create(&user).Error
 		log.Println(err)
 
 		var userFind usermod.User
@@ -54,6 +72,11 @@ func main() {
 		userFind.LastLoginIp = "192.168.1.11"
 		global.DB.Updates(&userFind)
 		result.OkDataMsg(c, user, "创建成功")
+	})
+	r.GET("/aaa/", middleware.Rate("4-H"), func(c *gin.Context) {
+		var userFind usermod.User
+		global.DB.First(&userFind)
+		result.OkDataMsg(c, userFind, "创建成功")
 	})
 
 	// 启动服务
@@ -90,7 +113,7 @@ func main() {
 - [ ] 分布式ID
   - [ ] snowflow
 - [ ] Websocket
-- [ ] 接口限流
+- [x] 接口限流
 
 ### 备注
 
