@@ -21,7 +21,7 @@ import (
 )
 
 type Model struct {
-	ID         dtype.DistributedId `json:"id,omitempty"            gorm:"column:id;primary_key;type:varchar(20)"`
+	ID         dtype.DistributedId `json:"id,omitempty"            gorm:"column:id;primary_key;"`
 	CreateTime dtype.Time          `json:"createTime,omitempty"    gorm:"column:create_time;comment:创建时间;"`
 	UpdateTime *dtype.Time         `json:"updateTime,omitempty"    gorm:"column:update_time;comment:更新时间;"`
 }

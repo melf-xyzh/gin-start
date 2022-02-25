@@ -37,6 +37,8 @@ func (t *DistributedId) Scan(v interface{}) error {
 		numStr := data.ToString(v.([]uint8))
 		num, _ := strconv.ParseInt(numStr, 10, 64)
 		*t = DistributedId(num)
+	case int64:
+		*t = DistributedId(v.(int64))
 	default:
 		val := reflect.ValueOf(v)
 		typ := reflect.Indirect(val).Type()

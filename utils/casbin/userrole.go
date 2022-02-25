@@ -122,6 +122,14 @@ func HasRoleForUser(e *casbin.Enforcer, user, role string) (has bool, err error)
 	return
 }
 
+// UpdateRolesForUser
+/**
+ *  @Description: 更新用户的角色列表
+ *  @param e
+ *  @param user
+ *  @param roles
+ *  @return err
+ */
 func UpdateRolesForUser(e *casbin.Enforcer, user string, roles []string) (err error) {
 	// 删除用户角色
 	err = DeleteAllRolesForUser(e, user)
