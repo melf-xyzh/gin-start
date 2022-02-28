@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/go-redis/redis/v8 v8.11.4
+	github.com/itsjamie/gin-cors v0.0.0-20160420130702-97b4a9da7933
 	github.com/soheilhy/cmux v0.1.5
 	github.com/spf13/viper v1.10.1
 	github.com/ulule/limiter/v3 v3.9.0
