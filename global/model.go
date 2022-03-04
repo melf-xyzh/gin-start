@@ -15,9 +15,15 @@ package global
 import (
 	"fmt"
 	"github.com/bwmarrin/snowflake"
+	"sync"
 	"time"
 
 	"github.com/melf-xyzh/gin-start/utils/dtype"
+)
+
+var (
+	// 定义一个锁
+	idLock sync.Mutex
 )
 
 type Model struct {
@@ -32,6 +38,9 @@ type Model struct {
  *  @return DistributedId
  */
 func CreateId() dtype.DistributedId {
+	idLock.Lock()
+	defer idLock.Unlock()
+
 	// Create a new Node with a Node number of 1
 	// node, err := snowflake.NewNode(nodeNum)
 	// 为编号为nodeNum的节点生成一个节点
