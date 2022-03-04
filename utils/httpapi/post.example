@@ -1,0 +1,134 @@
+/**
+ * @Time    :2022/2/28 16:48
+ * @Author  :ZhangXiaoyu
+ */
+
+package httpapi
+
+import (
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
+)
+
+func Post() {
+	list1 := `[
+	{
+	"x": 116.449429,
+	"y": 40.014844,
+	"sp": 4,
+	"ag": 110,
+	"tm": 1478831753
+	},
+	{
+	"x": 116.449639,
+	"y": 40.014776,
+	"sp": 3,
+	"ag": 110,
+	"tm": 23
+	},
+	{
+	"x": 116.449859,
+	"y": 40.014716,
+	"sp": 3,
+	"ag": 111,
+	"tm": 33
+	},
+	{
+	"x": 116.450074,
+	"y": 40.014658,
+	"sp": 3,
+	"ag": 110,
+	"tm": 31
+	},
+	{
+	"x": 116.450273,
+	"y": 40.014598,
+	"sp": 3,
+	"ag": 111,
+	"tm": 20
+	}
+	]`
+	var list = []byte(list1)
+	res, err := http.Post("https://restapi.amap.com/v4/grasproad/driving?key=f926d72f2d598259ec8c67d041145470", "application/json;charset=utf-8", bytes.NewBuffer(list))
+	defer res.Body.Close()
+
+	fmt.Println(res)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(body))
+
+}
+
+// func Post1() {
+// 	client := &http.Client{}
+// 	// post要提交的数据
+// 	data := url.Values{}
+// 	data.Add("ak", "LaROGtmqAFul4HIqq3yl4Mq4G1FXjjSV")
+// 	data.Add("point_list", `[{"loc_time":1624295452,"latitude":36.2715924153,"longitude":120.401133898,"coord_type_input":"bd09ll"},{"loc_time":1624295615,"latitude":36.2710674153,"longitude":120.401122046,"coord_type_input":"bd09ll"},{"loc_time":1624295715,"latitude":36.2710674153,"longitude":120.401122046,"coord_type_input":"bd09ll"},{"loc_time":1624295815,"latitude":36.26970681,"longitude":120.406126,"coord_type_input":"bd09ll"},{"loc_time":1624295915,"latitude":36.2626899159,"longitude":120.406257629,"coord_type_input":"bd09ll"},{"loc_time":1624296015,"latitude":36.2554959254,"longitude":120.401709345,"coord_type_input":"bd09ll"},{"loc_time":1624296115,"latitude":36.2482072286,"longitude":120.398668032,"coord_type_input":"bd09ll"},{"loc_time":1624296215,"latitude":36.2453202208,"longitude":120.390573255,"coord_type_input":"bd09ll"},{"loc_time":1624296315,"latitude":36.2462943954,"longitude":120.378697631,"coord_type_input":"bd09ll"},{"loc_time":1624296415,"latitude":36.2464401658,"longitude":120.368128971,"coord_type_input":"bd09ll"},{"loc_time":1624296515,"latitude":36.2411743783,"longitude":120.360663512,"coord_type_input":"bd09ll"}]`)
+// 	data.Add("rectify_option", "need_mapmatch:1|transport_mode:driving|denoise_grade:1|vacuate_grade:1")
+//
+// 	req, err := http.NewRequest("POST", "https://api.map.baidu.com/rectify/v1/track", strings.NewReader(data.Encode()))
+// 	if err != nil {
+// 		log.Println(err)
+// 	}
+// 	// 伪装头部
+// 	// req.Header.Set("Accept", "application/json, text/javascript, */*; q=0.01")
+// 	// req.Header.Add("Accept-Encoding", "gzip, deflate, br")
+// 	// req.Header.Add("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4")
+// 	// req.Header.Add("Connection", "keep-alive")
+// 	// req.Header.Add("Content-Length", "25")
+// 	// req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+// 	// req.Header.Add("Cookie", "user_trace_token=20170425200852-dfbddc2c21fd492caac33936c08aef7e; LGUID=20170425200852-f2e56fe3-29af-11e7-b359-5254005c3644; showExpriedIndex=1; showExpriedCompanyHome=1; showExpriedMyPublish=1; hasDeliver=22; index_location_city=%E5%85%A8%E5%9B%BD; JSESSIONID=CEB4F9FAD55FDA93B8B43DC64F6D3DB8; TG-TRACK-CODE=search_code; SEARCH_ID=b642e683bb424e7f8622b0c6a17ffeeb; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1493122129,1493380366; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1493383810; _ga=GA1.2.1167865619.1493122129; LGSID=20170428195247-32c086bf-2c09-11e7-871f-525400f775ce; LGRID=20170428205011-376bf3ce-2c11-11e7-8724-525400f775ce; _putrc=AFBE3C2EAEBB8730")
+// 	// req.Header.Add("Host", "www.lagou.com")
+// 	// req.Header.Add("Origin", "https://www.lagou.com")
+// 	// req.Header.Add("Referer", "https://www.lagou.com/jobs/list_python?labelWords=&fromSearch=true&suginput=")
+// 	// req.Header.Add("X-Anit-Forge-Code", "0")
+// 	// req.Header.Add("X-Anit-Forge-Token", "None")
+// 	// req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+// 	// req.Header.Add("X-Requested-With", "XMLHttpRequest")
+// 	// 提交请求
+// 	resp, err := client.Do(req)
+// 	defer resp.Body.Close()
+// 	if err != nil {
+// 		log.Println(err)
+// 	}
+// 	// 读取返回值
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	log.Println(string(body))
+// 	// utf8 := mahonia.NewDecoder("gbk").ConvertString(string(body))
+// 	// fmt.Println(string(utf8))
+// }
+
+func Post1() {
+	data := url.Values{}
+	data.Add("ak", "LaROGtmqAFul4HIqq3yl4Mq4G1FXjjSV")
+	data.Add("point_list", `[{"loc_time":1624295452,"latitude":36.2715924153,"longitude":120.401133898,"coord_type_input":"bd09ll"},{"loc_time":1624295615,"latitude":36.2710674153,"longitude":120.401122046,"coord_type_input":"bd09ll"},{"loc_time":1624295715,"latitude":36.2710674153,"longitude":120.401122046,"coord_type_input":"bd09ll"},{"loc_time":1624295815,"latitude":36.26970681,"longitude":120.406126,"coord_type_input":"bd09ll"},{"loc_time":1624295915,"latitude":36.2626899159,"longitude":120.406257629,"coord_type_input":"bd09ll"},{"loc_time":1624296015,"latitude":36.2554959254,"longitude":120.401709345,"coord_type_input":"bd09ll"},{"loc_time":1624296115,"latitude":36.2482072286,"longitude":120.398668032,"coord_type_input":"bd09ll"},{"loc_time":1624296215,"latitude":36.2453202208,"longitude":120.390573255,"coord_type_input":"bd09ll"},{"loc_time":1624296315,"latitude":36.2462943954,"longitude":120.378697631,"coord_type_input":"bd09ll"},{"loc_time":1624296415,"latitude":36.2464401658,"longitude":120.368128971,"coord_type_input":"bd09ll"},{"loc_time":1624296515,"latitude":36.2411743783,"longitude":120.360663512,"coord_type_input":"bd09ll"}]`)
+	data.Add("rectify_option", "need_mapmatch:1|transport_mode:driving|denoise_grade:1|vacuate_grade:1")
+	res, err := http.Post("https://api.map.baidu.com/rectify/v1/track", "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	defer res.Body.Close()
+
+	fmt.Println(res)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(body))
+}
