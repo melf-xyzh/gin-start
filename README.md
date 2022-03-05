@@ -213,6 +213,43 @@ if err != nil {
 }
 ```
 
+### 第三方接口请求（GET / POST方式）
+
+```go
+func main(){
+	data, err := httpapi.Get.Get("https://api.uomg.com/api/comments.163")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println(data)
+
+
+	data, err = httpapi.Get.GetWithParams("https://api.uomg.com/api/comments.163", map[string]interface{}{"format":"text"})
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println(data)
+
+	data,err = httpapi.Post.PostJson("需要请求的url",map[string]interface{}{"format":"text"})
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println(data)
+
+	data,err = httpapi.Post.PostFormData("需要请求的url",map[string]interface{}{"format":"text"})
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println(data)
+
+	data,err = httpapi.Post.PostUrlencoded("需要请求的url",map[string]interface{}{"format":"text"})
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println(data)
+}
+```
+
 ### 项目目录
 
 ```bash
