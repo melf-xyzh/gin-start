@@ -8,6 +8,7 @@ package ip
 import (
 	"errors"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/thinkeridea/go-extend/exnet"
 	"io"
 	"io/ioutil"
@@ -20,6 +21,10 @@ const (
 	GET_PUBLIC_IP_URL = "http://myexternalip.com/raw"
 )
 
+var (
+	v *validator.Validate
+)
+
 // GetClientIP
 /**
  *  @Description: 获取用户真实IP
@@ -28,7 +33,7 @@ const (
  */
 func GetClientIP(r *http.Request) (ip string) {
 	ip = exnet.ClientPublicIP(r)
-	if ip == ""{
+	if ip == "" {
 		ip = exnet.ClientIP(r)
 	}
 	return
@@ -94,16 +99,56 @@ func GetPublicIP() (ip string, err error) {
 	return ip, nil
 }
 
-
+// IsIpAddress
+/**
+ * @Description: 判断是否为合法的ip地址
+ * @param ip ip地址
+ * @return ok 是否合法
+ */
 func IsIpAddress(ip string) (ok bool) {
-
-	return
+	if v == nil {
+		v = validator.New()
+	}
+	errs := v.Var(ip, "ip")
+	if errs != nil {
+		return false
+	} else {
+		return true
+	}
 }
 
-func IsIPv4(ip string) (ok string) {
-	return
+// IsIPv4
+/**
+ * @Description: 判断是否为合法的ipv4地址
+ * @param ip ip地址
+ * @return ok 是否合法
+ */
+func IsIPv4(ip string) (ok bool) {
+	if v == nil {
+		v = validator.New()
+	}
+	errs := v.Var(ip, "ipv4")
+	if errs != nil {
+		return false
+	} else {
+		return true
+	}
 }
 
-func IsIPv6(ip string) (ok string) {
-	return
+// IsIPv6
+/**
+ * @Description: 判断是否为合法的ipv6地址
+ * @param ip ip地址
+ * @return ok 是否合法
+ */
+func IsIPv6(ip string) (ok bool) {
+	if v == nil {
+		v = validator.New()
+	}
+	errs := v.Var(ip, "ipv6")
+	if errs != nil {
+		return false
+	} else {
+		return true
+	}
 }
