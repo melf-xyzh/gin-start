@@ -102,3 +102,62 @@ func File(c *gin.Context, fileName, filePath string) {
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(filePath)
 }
+
+// OkView
+/**
+ * @Description: 返回成功界面
+ * @param c
+ * @param tmplPath tmpl文件路径
+ * @param title 网页标题
+ * @param msg
+ */
+func OkView(c *gin.Context, tmplPath, title, msg string) {
+	c.HTML(http.StatusOK, tmplPath, gin.H{
+		"code":  CODE_SUCCESS,
+		"title": title,
+		"msg":   msg,
+	})
+}
+
+// FailView
+/**
+ * @Description: 返回失败界面
+ * @param c
+ * @param tmplPath tmpl文件路径
+ * @param title 网页标题
+ * @param msg
+ */
+func FailView(c *gin.Context, tmplPath, title, msg string) {
+	c.HTML(http.StatusOK, tmplPath, gin.H{
+		"code":  CODE_FAIL,
+		"title": title,
+		"msg":   msg,
+	})
+}
+
+// View
+/**
+ * @Description: 返回界面
+ * @param c
+ * @param tmplPath
+ * @param title
+ */
+func View(c *gin.Context, tmplPath, title string) {
+	c.HTML(http.StatusOK, tmplPath, gin.H{
+		"code":  CODE_FAIL,
+		"title": title,
+	})
+}
+
+// DataView
+/**
+ * @Description: 返回数据界面
+ * @param c
+ * @param tmplPath
+ * @param title
+ * @param data
+ */
+func DataView(c *gin.Context, tmplPath, title string, data map[string]interface{}) {
+	data["title"] = title
+	c.HTML(http.StatusOK, tmplPath, data)
+}

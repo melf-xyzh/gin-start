@@ -13,6 +13,7 @@
 package global
 
 import (
+	"github.com/bwmarrin/snowflake"
 	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
@@ -21,10 +22,11 @@ import (
 )
 
 var (
-	E        *Env                // 环境类型实例
-	V        *viper.Viper        // Viper实例
-	Enforcer *casbin.Enforcer    // Casbin执行者
-	DB       *gorm.DB            // 数据库连接池
-	RDB      *redis.Client       // Redis连接池
-	Validate *validator.Validate // Validate参数校验器
+	E        *Env                   // 环境类型实例
+	V        *viper.Viper           // Viper实例
+	Enforcer *casbin.SyncedEnforcer // Casbin执行者
+	DB       *gorm.DB               // 数据库连接池
+	RDB      *redis.Client          // Redis连接池
+	Validate *validator.Validate    // Validate参数校验器
+	Node     *snowflake.Node        // 雪花ID节点
 )

@@ -16,9 +16,7 @@ package global
 type Env = string
 
 const (
-	ENV_DEV  Env = "dev"  // 开发环境
-	ENV_PRO  Env = "pro"  // 生产环境
-	ENV_TEST Env = "test" // 测试环境
-	ENV_RET  Env = "ren"  // 回归环境
-	ENV_FAT  Env = "fat"  // 预发布环境
+	ENV_DEV Env = "dev" // 开发环境
+	ENV_PRO Env = "pro" // 生产环境
+	ENV_FAT Env = "fat" // 测试环境
 )

@@ -15,6 +15,8 @@ package conf
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"github.com/bwmarrin/snowflake"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -147,7 +149,7 @@ func (i Init) Redis() *redis.Client {
  * @Description: 初始化Casbin
  * @receiver i
  */
-func (i Init) Casbin() (Enforcer *casbin.Enforcer) {
+func (i Init) Casbin() (Enforcer *casbin.SyncedEnforcer) {
 	// Gorm适配器
 	adapter, err := gormadapter.NewAdapterByDB(global.DB)
 	if err != nil {
@@ -173,7 +175,7 @@ func (i Init) Casbin() (Enforcer *casbin.Enforcer) {
 	`)
 
 	// 通过ORM新建一个执行者
-	Enforcer, err = casbin.NewEnforcer(m, adapter)
+	Enforcer, err = casbin.NewSyncedEnforcer(m, adapter)
 	if err != nil {
 		panic("新建Casbin执行者异常：" + err.Error())
 	}
@@ -224,4 +226,13 @@ func (i Init) Run(r *gin.Engine) {
 func (i Init) Validate() *validator.Validate {
 	v := validator.New()
 	return v
+}
+
+func (i Init) Node() *snowflake.Node {
+	nodeNum := global.V.GetInt64("Distributed.Node")
+	node, err := snowflake.NewNode(nodeNum)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return node
 }
