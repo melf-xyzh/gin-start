@@ -46,6 +46,8 @@ func main() {
 	global.V = init.Viper()
 	// 初始化数据库连接池
 	global.DB = init.Database()
+	// 初始化雪花ID节点
+	global.Node = init.Node()
 	// 初始化Redis连接池
 	global.RDB = init.Redis()
 	// 初始化参数校验器
