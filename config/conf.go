@@ -36,6 +36,33 @@ import (
 
 type Init struct{}
 
+func (i Init) EnvActive() *global.Env {
+	v := viper.New()
+	// 配置文件路径
+	v.AddConfigPath("resource")
+	// 配置文件名
+	v.SetConfigName("active")
+	// 配置文件类型
+	v.SetConfigType("yaml")
+	// 读取配置文件信息
+	err := v.ReadInConfig()
+	if err != nil {
+		panic("读取配置文件信息失败：" + err.Error())
+	}
+	active := v.GetString("active")
+	log.Println("当前环境：" + active)
+	switch active {
+	case "fat":
+		return i.Env(global.ENV_FAT)
+	case "dev":
+		return i.Env(global.ENV_DEV)
+	case "pro":
+		return i.Env(global.ENV_PRO)
+	default:
+		return i.Env(global.ENV_DEV)
+	}
+}
+
 // Env
 /**
  * @Description: 初始化环境
@@ -55,12 +82,12 @@ func (i Init) Env(e global.Env) *global.Env {
  */
 func (i Init) Viper() *viper.Viper {
 	v := viper.New()
-	// 配置文件名
-	v.SetConfigName(*global.E + ".config")
-	// 配置文件类型
-	v.SetConfigType("json")
 	// 配置文件路径
 	v.AddConfigPath("resource")
+	// 配置文件名
+	v.SetConfigName(*global.E + "_config")
+	// 配置文件类型
+	v.SetConfigType("yaml")
 	// 读取配置文件信息
 	err := v.ReadInConfig()
 	if err != nil {

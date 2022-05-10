@@ -1,0 +1,5 @@
+# 激活环境指定
+# dev 开发环境
+# fat 测试环境
+# pro 生产环境
+active: fat

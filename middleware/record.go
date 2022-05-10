@@ -7,9 +7,9 @@ package middleware
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/melf-xyzh/gin-start/global"
+	"github.com/melf-xyzh/gin-start/utils/ip"
 	"github.com/mssola/user_agent"
 	"io/ioutil"
 	"log"
@@ -18,6 +18,7 @@ import (
 	"time"
 )
 
+// 自动建表
 func autoCreateTables() {
 	if global.DB != nil {
 		err := global.DB.AutoMigrate(
@@ -29,107 +30,154 @@ func autoCreateTables() {
 	}
 }
 
+// parseUserAgent
+/**
+ *  @Description: 解析userAgent
+ *  @param c
+ *  @param record
+ */
+func parseUserAgent(c *gin.Context, record *Record) {
+	// 获取userAgent
+	userAgent := c.Request.UserAgent()
+	ua := user_agent.New(c.Request.UserAgent())
+	rex := regexp.MustCompile(`\(([^)]+)\)`)
+	params := rex.FindAllStringSubmatch(userAgent, -1)
+	param := strings.Replace(params[0][0], ")", "", 1)
+	uaInfo := strings.Split(param, ";")
+	engineName, engineVersion := ua.Engine()
+	browserName, browserVersion := ua.Browser()
+
+	record.UserAgent = userAgent
+	record.Platform = ua.Platform()
+	record.OS = ua.OS()
+	record.Engine = engineName + "/" + engineVersion
+	record.BrowserName = browserName
+	record.BrowserVersion = browserVersion
+	record.Brand = ""
+	record.ProductModel = strings.TrimSpace(uaInfo[2])
+}
+
+// parseBody
+/**
+ *  @Description: 获取Body
+ *  @param c
+ *  @param record
+ */
+func parseBody(c *gin.Context, record *Record) {
+	// 获取Request.Body
+	body, _ := ioutil.ReadAll(c.Request.Body)
+	// 将其转为String
+	data := string(body)
+	// 替换字符串及字符串分隔
+	data = strings.Replace(data, "\n", "", -1)
+	dataLs := strings.Split(data, "\r")
+	record.Body = data
+	if len(dataLs) == 0 {
+		return
+	}
+	// 拼接请求参数
+	var build strings.Builder
+	for i, v := range dataLs {
+		if strings.Contains(v, "Content-Disposition") {
+			build.WriteString(v)
+			if !strings.Contains(v, "filename") && len(dataLs) >= i+2 {
+				build.WriteString("; value=")
+				build.WriteString(dataLs[i+2])
+			}
+			build.WriteString("\n")
+		}
+	}
+	data = build.String()
+	return
+}
+
+func parseIp(c *gin.Context, record *Record) {
+	record.Ip = c.ClientIP()
+	data, err := ip.GetGPSByIpAmap(record.Ip)
+	if err != nil {
+		return
+	}
+	if data["country"] != nil {
+		record.Country = data["country"].(string)
+	}
+	if data["location"] != nil {
+		record.Country = data["location"].(string)
+	}
+	if data["province"] != nil {
+		record.Country = data["province"].(string)
+	}
+	if data["city"] != nil {
+		record.Country = data["city"].(string)
+	}
+}
+
+// getHeader
+/**
+ *  @Description: 获取header
+ *  @param c
+ *  @return headerStr
+ */
+func getHeader(c *gin.Context) (headerStr string) {
+	// 获取Herader
+	header := c.Request.Header
+	if len(header) == 0 {
+		return
+	}
+	// 拼接Herder
+	var build strings.Builder
+	for k, v := range header {
+		build.WriteString(k)
+		build.WriteString(":")
+		for i, v0 := range v {
+			build.WriteString(v0)
+			if i != len(v)-1 {
+				build.WriteString(",")
+			}
+		}
+		build.WriteString(";\n")
+	}
+	headerStr = build.String()
+	return
+}
+
 // AccessRecord 访问记录中间件
 func AccessRecord() gin.HandlerFunc {
 	autoCreateTables()
 	return func(c *gin.Context) {
-		userAgent := c.Request.UserAgent()
-		ua := user_agent.New(c.Request.UserAgent())
-		rex := regexp.MustCompile(`\(([^)]+)\)`)
-		params := rex.FindAllStringSubmatch(userAgent, -1)
-
-		param := strings.Replace(params[0][0], ")", "", 1)
-		uaInfo := strings.Split(param, ";")
-
-		engineName, engineVersion := ua.Engine()
-		browserName, browserVersion := ua.Browser()
+		record := &Record{}
+		record.Method = c.Request.Method
+		record.Path = c.Request.URL.Path
+		// ContentType
+		record.ContentType = c.ContentType()
+		// 解析userAgent
+		parseUserAgent(c, record)
+		// 解析Body
+		parseBody(c, record)
+		// IP
+		parseIp(c, record)
+		// 保存Query参数
+		record.Query = c.Request.URL.RawQuery
+		// 保存Header
+		record.Header = getHeader(c)
+		// ResponseWriter.Write查看响应
+		writer := responseBodyWriter{
+			ResponseWriter: c.Writer,
+			body:           &bytes.Buffer{},
+		}
+		c.Writer = writer
 		now := time.Now()
 		c.Next()
-
-		c.ContentType()
-
-		body, _ := ioutil.ReadAll(c.Request.Body)
-		data := string(body)
-		data = strings.Replace(data, "\n", "", -1)
-		dataLs := strings.Split(data, "\r")
-
-		// Query
-		query := c.Request.URL.RawQuery
-
-		// Body
-		if len(dataLs) > 0 {
-			var build strings.Builder
-			for i, v := range dataLs {
-				if strings.Contains(v, "Content-Disposition") {
-					build.WriteString(v)
-					if !strings.Contains(v, "filename") && len(dataLs) >= i+2 {
-						build.WriteString("; value=")
-						build.WriteString(dataLs[i+2])
-					}
-					build.WriteString("\n")
-				}
-			}
-			data = build.String()
-		}
-
-		// Headers
-		header := c.Request.Header
-		var headerStr string
-		if len(header) > 0 {
-			var build strings.Builder
-			for k, v := range header {
-				build.WriteString(k)
-				build.WriteString(":")
-				for i, v0 := range v {
-					build.WriteString(v0)
-					if i != len(v)-1 {
-						build.WriteString(",")
-					}
-				}
-				build.WriteString(";\n")
-			}
-			headerStr = build.String()
-		}
-
-		writer := ResponseWriter{ResponseWriter: c.Writer, body: &bytes.Buffer{}}
-		c.Writer = writer
-		fmt.Println(writer.body.String())
-
-		record := Record{
-			Ip:             c.ClientIP(),
-			Method:         c.Request.Method,
-			Path:           c.Request.URL.Path,
-			Status:         c.Writer.Status(),
-			Latency:        time.Now().Sub(now).Milliseconds(),
-			UserAgent:      userAgent,
-			Error:          c.Errors.ByType(gin.ErrorTypePrivate).String(),
-			Body:           data,
-			Query:          query,
-			Header:         headerStr,
-			Response:       writer.body.String(),
-			Location:       "",
-			Province:       "",
-			City:           "",
-			District:       "",
-			Isp:            "",
-			Platform:       ua.Platform(),
-			OS:             ua.OS(),
-			Engine:         engineName + "/" + engineVersion,
-			BrowserName:    browserName,
-			BrowserVersion: browserVersion,
-			Brand:          "",
-			ProductModel:   strings.TrimSpace(uaInfo[2]),
-			ContentType:    c.ContentType(),
-		}
+		record.Response = writer.body.String()
+		record.Error = c.Errors.ByType(gin.ErrorTypePrivate).String()
+		// 延时，毫秒
+		record.Latency = time.Now().Sub(now).Milliseconds()
+		// 请求状态码
+		record.Status = c.Writer.Status()
+		// 保存基础信息
 		record.ID = global.CreateId()
 		record.CreateTime = global.CreateTime()
 		global.DB.Create(&record)
 	}
-}
-
-type ResponseWriter struct {
-	gin.ResponseWriter
-	body *bytes.Buffer
 }
 
 type Record struct {
@@ -144,8 +192,9 @@ type Record struct {
 	Body           string `json:"body"                   form:"body"                 gorm:"column:body;comment:Body;type:text;"`
 	Query          string `json:"query"                  form:"query"                gorm:"column:query;comment:Query;type:text;"`
 	Header         string `json:"header"                 form:"header"               gorm:"column:header;comment:Header;type:text;"`
-	Response       string `json:"response"               form:"response"             gorm:"column:response;comment:相应;type:text;"`
+	Response       string `json:"response"               form:"response"             gorm:"column:response;comment:响应;type:text;"`
 	Location       string `json:"location"               form:"location"             gorm:"column:location;comment:位置;type:varchar(30);"`
+	Country        string `json:"country"                form:"country"              gorm:"column:country;comment:国家;type:varchar(255)"`
 	Province       string `json:"province"               form:"province"             gorm:"column:province;comment:省;type:varchar(20);"`
 	City           string `json:"city"                   form:"city"                 gorm:"column:city;comment:市;type:varchar(20);"`
 	District       string `json:"district"               form:"district"             gorm:"column:district;comment:区;type:varchar(20);"`
@@ -163,4 +212,14 @@ type Record struct {
 // TableName 自定义表名
 func (Record) TableName() string {
 	return "record"
+}
+
+type responseBodyWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (r responseBodyWriter) Write(b []byte) (int, error) {
+	r.body.Write(b)
+	return r.ResponseWriter.Write(b)
 }

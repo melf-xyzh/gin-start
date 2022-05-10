@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+	"unsafe"
 )
 
 // ToString
@@ -40,12 +41,9 @@ func ToString(i interface{}) (str string) {
 		str = strconv.FormatFloat(i.(float64), 'f', -1, 32)
 	case time.Time:
 		str = i.(time.Time).Format("2006-01-02 15:04:05")
-	case []uint8:
-		var ba []byte
-		for _, b := range i.([]uint8) {
-			ba = append(ba, byte(b))
-		}
-		str = string(ba)
+	case []byte:
+		b := i.([]byte)
+		str = *(*string)(unsafe.Pointer(&b))
 	case error:
 		str = i.(error).Error()
 	default:
@@ -173,6 +171,23 @@ func ToFloat64(i interface{}) (num float64, err error) {
 		num = float64(i.(float32))
 	case float64:
 		num = i.(float64)
+	default:
+		panic("该类型暂不支持")
+	}
+	return
+}
+
+// ToByteArray
+/**
+ *  @Description: 转换为[]byte
+ *  @param i
+ *  @return b
+ */
+func ToByteArray(i interface{}) (b []byte) {
+	switch i.(type) {
+	case string:
+		str := i.(string)
+		return *(*[]byte)(unsafe.Pointer(&str))
 	default:
 		panic("该类型暂不支持")
 	}
