@@ -1,9 +1,14 @@
 "Database":
   "Type": "Mysql"
+  # 数据库地址
   "DbHost": "127.0.0.1"
+  # 数据库端口
   "DbPort": "3306"
+  # 用户名
   "DbUser": "root"
+  # 密码
   "DbPassword": "123456789"
+  # 数据库名
   "DbName": "gin-start"
   "MaxIdleConns": 10
   "MaxOpenConns": 100

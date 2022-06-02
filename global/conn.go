@@ -17,6 +17,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
+	"github.com/minio/minio-go/v7"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -29,4 +30,5 @@ var (
 	RDB      *redis.Client          // Redis连接池
 	Validate *validator.Validate    // Validate参数校验器
 	Node     *snowflake.Node        // 雪花ID节点
+	MioIO    *minio.Client          // MinIO客户端
 )

@@ -24,6 +24,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/melf-xyzh/gin-start/global"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/soheilhy/cmux"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -262,4 +264,26 @@ func (i Init) Node() *snowflake.Node {
 		fmt.Println(err)
 	}
 	return node
+}
+
+// MinIO
+/**
+ *  @Description: 初始化MinIO客户端
+ *  @receiver i
+ *  @return *minio.Client
+ */
+func (i Init) MinIO() *minio.Client {
+	endpoint := global.V.GetString("MinIO.endpoint")
+	accessKeyID := global.V.GetString("MinIO.accessKeyID")
+	secretAccessKey := global.V.GetString("MinIO.secretAccessKey")
+	useSSL := global.V.GetBool("MinIO.useSSL")
+	// 初始化MioIO客户端
+	minioClient, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Secure: useSSL,
+	})
+	if err != nil {
+		panic(err)
+	}
+	return minioClient
 }
