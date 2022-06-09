@@ -7,6 +7,7 @@ package httpapi
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	datautils "github.com/melf-xyzh/gin-start/utils/data"
@@ -15,6 +16,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 	"unsafe"
 )
 
@@ -172,7 +174,15 @@ func (p *PostRequest) PostPro(urlPath, contentType string, bodyMap map[string]in
 		}
 	}
 
-	client := http.Client{}
+	// 解决 x509: certificate signed by unknown authority
+	// 通过设置tls.Config的InsecureSkipVerify为true，client将不再对服务端的证书进行校验。
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := http.Client{
+		Timeout:   time.Second * 20,
+		Transport: transport,
+	}
 	var req *http.Request
 	req, err = http.NewRequest(http.MethodPost, urlPath, strings.NewReader(dataVal.Encode()))
 	// 添加请求头
